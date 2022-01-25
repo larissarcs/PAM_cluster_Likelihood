@@ -1,0 +1,72 @@
+library(cluster)
+library(skmeans)
+library("dbscan")
+library(kohonen)
+
+
+
+dados = read.table("Suscet6.txt",header = TRUE)
+dados
+
+dados.Y = dados[,9]
+dados.Y
+
+dados.X = dados[,1:8]
+dados.X
+
+boxplot(dados.X)
+
+##  Hopkins
+
+library(clustertend)
+
+## Valores de H proximos a 0.5 indicam que o conjunto de dados eh distribuido uniformemente 
+## (ou seja, sem clusters significativos)
+
+#  Hopkins statistical
+set.seed(123)
+hopkins(dados.X, n = nrow(dados.X)-1)
+
+## Determinando o numero otimo de clusters
+
+# install.packages("NbClust")
+
+library(NbClust)
+
+# Elbow method
+fviz_nbclust(dados.X, kmeans, method = "wss") + geom_vline(xintercept = 3, linetype = 2)+labs(subtitle = "Elbow method")
+
+# Silhouette method
+fviz_nbclust(dados.X, kmeans, method = "silhouette")+labs(subtitle = "Silhouette method")
+
+
+set.seed(123)
+fviz_nbclust(dados.X, kmeans, nstart = 25, method = "gap_stat", nboot = 50)+
+  labs(subtitle = "Gap statistic method")
+
+
+nb <- NbClust(dados.X, distance = "euclidean", min.nc = 2,
+              max.nc = 4, method = "kmeans")
+
+
+fviz_nbclust(nb)
+
+## Metodos nao hierarquicos
+
+## k-medoides
+
+kM = eclust(dados.X, "pam", k = 2)
+kM
+
+grupos.kM = kM$cluster
+grupos.kM
+library(factoextra)
+
+fviz_cluster(list(data = dados.X, cluster = grupos.kM))
+
+table(grupos.kM)
+base_com_grupos8 <- data.frame(dados.X,grupos = grupos.kM)
+base_com_grupos8
+dados = write.table(base_com_grupos8, file = "Conseq2Pam3.txt")
+getwd()
+View(base_com_grupos8)
