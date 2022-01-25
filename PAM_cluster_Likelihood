@@ -3,31 +3,18 @@ library(skmeans)
 library("dbscan")
 library(kohonen)
 
-
-
-dados = read.table("Suscet6.txt",header = TRUE)
+##read data
+dados = read.table("data.txt",header = TRUE)
 dados
-
-dados.Y = dados[,9]
-dados.Y
 
 dados.X = dados[,1:8]
 dados.X
 
 boxplot(dados.X)
 
-##  Hopkins
-
 library(clustertend)
 
-## Valores de H proximos a 0.5 indicam que o conjunto de dados eh distribuido uniformemente 
-## (ou seja, sem clusters significativos)
-
-#  Hopkins statistical
-set.seed(123)
-hopkins(dados.X, n = nrow(dados.X)-1)
-
-## Determinando o numero otimo de clusters
+## Optimal number of clusters
 
 # install.packages("NbClust")
 
@@ -51,9 +38,9 @@ nb <- NbClust(dados.X, distance = "euclidean", min.nc = 2,
 
 fviz_nbclust(nb)
 
-## Metodos nao hierarquicos
+## Non-hierarchical methods
 
-## k-medoides
+## k-medoides - PAM
 
 kM = eclust(dados.X, "pam", k = 2)
 kM
@@ -67,6 +54,6 @@ fviz_cluster(list(data = dados.X, cluster = grupos.kM))
 table(grupos.kM)
 base_com_grupos8 <- data.frame(dados.X,grupos = grupos.kM)
 base_com_grupos8
-dados = write.table(base_com_grupos8, file = "Conseq2Pam3.txt")
+dados = write.table(base_com_grupos8, file = "Pam.txt")
 getwd()
 View(base_com_grupos8)
