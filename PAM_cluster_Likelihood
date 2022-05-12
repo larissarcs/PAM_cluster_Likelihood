@@ -1,6 +1,5 @@
 library(skmeans)
-library("dbscan")
-library(kohonen)
+
 
 ##read data
 dados = read.table("data.txt",header = TRUE)
